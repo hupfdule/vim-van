@@ -1,0 +1,51 @@
+Given asciidoc (Bibref):
+  - [[[ref1]]] Some text
+  - [[[ref2, xref text]]] Some other text
+  - [[[ref3]]]
+
+  * [[[ref4]]]
+  ** [[[ref5]]] is invalid as it is not a top level list item
+
+  - This is not a [[[ref6]]] as the refid must come directly after the bullet.
+
+  [[[ref7]]] is not ref as well as it is missing the list items bullet.
+
+  - [[[ref eight]]] is not a ref as it contains a space.
+
+
+Execute (match bibrefs):
+  let match_ref1 = matchlist(getline(1), g:asciidoc#regex#bib_entry)
+  AssertEqual 'ref1',            match_ref1[1], "bibref with content (refid)"
+  AssertEqual '',                match_ref1[2], "bibref with content (reftext)"
+  AssertEqual 'Some text',       match_ref1[3], "bibref with content (content)"
+
+  let match_ref2 = matchlist(getline(2), g:asciidoc#regex#bib_entry)
+  AssertEqual 'ref2',            match_ref2[1], "bibref with content and reftext (refid)"
+  AssertEqual 'xref text',       match_ref2[2], "bibref with content and reftext (reftext)"
+  AssertEqual 'Some other text', match_ref2[3], "bibref with content and reftext (content)"
+
+  let match_ref3 = matchlist(getline(3), g:asciidoc#regex#bib_entry)
+  AssertEqual 'ref3',            match_ref3[1], "bibref without content (refid)"
+  AssertEqual '',                match_ref3[2], "bibref without content (reftext)"
+  AssertEqual '',                match_ref3[3], "bibref without content (content)"
+
+  let match_empty = matchlist(getline(4), g:asciidoc#regex#bib_entry)
+  AssertEqual [],                match_empty,   "empty line"
+
+  let match_ref4 = matchlist(getline(5), g:asciidoc#regex#bib_entry)
+  AssertEqual 'ref4',            match_ref4[1], "bibref with different bullet"
+
+  let match_ref5 = matchlist(getline(6), g:asciidoc#regex#bib_entry)
+  AssertEqual [],                match_ref5,    "sub list item"
+
+  let match_ref6 = matchlist(getline(8), g:asciidoc#regex#bib_entry)
+  AssertEqual [],                match_ref5,    "refid mid sentence"
+
+  let match_ref7 = matchlist(getline(10), g:asciidoc#regex#bib_entry)
+  AssertEqual [],                match_ref7,    "missing bullet"
+
+  let match_ref8 = matchlist(getline(12), g:asciidoc#regex#bib_entry)
+  AssertEqual [],                match_ref8,    "multi-word refid"
+
+
+

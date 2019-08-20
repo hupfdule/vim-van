@@ -1,0 +1,582 @@
+Given asciidoc (ATX headings):
+  = ATX title
+
+  == ATX heading level 1
+
+  === ATX heading level 2
+
+  ==== ATX heading level 3
+
+  ===== ATX heading level 4
+
+  ====== ATX heading level 5
+
+  [[someanchor]]
+  === ATX heading level 2 with preceding anchor line
+
+  .some label
+  == ATX heading level 1 with preceding label line
+
+Execute (search all ATX headings):
+  let lnum = 0
+  " Find first heading
+  let lnum = asciidoc#sections#search_heading(lnum, 'c')
+  AssertEqual 1,  lnum
+  " Find heading /at/ first line
+  let lnum = asciidoc#sections#search_heading(lnum, 'c')
+  AssertEqual 1,  lnum
+  " Find heading /after/ first line
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 3,  lnum
+  " Find heading level 2
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 5,  lnum
+  " Find heading level 3
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 7,  lnum
+  " Find heading level 4
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 9,  lnum
+  " Find heading level 5
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 11, lnum
+  " Find heading with anchor line
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 14, lnum
+  " Find heading with label line
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 17, lnum
+  " Find non-existing heading
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 0,  lnum
+
+Execute (search all ATX headings backwards):
+  let lnum = 17
+  " Find heading with label line
+  let lnum = asciidoc#sections#search_heading(lnum, 'cb')
+  AssertEqual 17, lnum
+  " Find heading with anchor line
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 14, lnum
+  " Find heading level 5
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 11, lnum
+  " Find heading level 4
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 9,  lnum
+  " Find heading level 3
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 7,  lnum
+  " Find heading level 2
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 5,  lnum
+  " Find heading /after/ first line
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 3,  lnum
+  " Find heading /at/ first line
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 1,  lnum
+  " Find non-existing heading
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 0,  lnum
+
+Execute (get ATX heading info):
+  let info = asciidoc#sections#get_heading_info(1)
+  AssertEqual {'lnum':    1,
+            \  'type':    'atx_asymmetric',
+            \  'level':   0,
+            \  'title':   'ATX title',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(3)
+  AssertEqual {'lnum':    3,
+            \  'type':    'atx_asymmetric',
+            \  'level':   1,
+            \  'title':   'ATX heading level 1',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(5)
+  AssertEqual {'lnum':    5,
+            \  'type':    'atx_asymmetric',
+            \  'level':   2,
+            \  'title':   'ATX heading level 2',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(7)
+  AssertEqual {'lnum':    7,
+            \  'type':    'atx_asymmetric',
+            \  'level':   3,
+            \  'title':   'ATX heading level 3',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(9)
+  AssertEqual {'lnum':    9,
+            \  'type':    'atx_asymmetric',
+            \  'level':   4,
+            \  'title':   'ATX heading level 4',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(11)
+  AssertEqual {'lnum':    11,
+            \  'type':    'atx_asymmetric',
+            \  'level':   5,
+            \  'title':   'ATX heading level 5',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(14)
+  AssertEqual {'lnum':    14,
+            \  'type':    'atx_asymmetric',
+            \  'level':   2,
+            \  'title':   'ATX heading level 2 with preceding anchor line',
+            \  'anchors': ['someanchor'],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(17)
+  AssertEqual {'lnum':    17,
+            \  'type':    'atx_asymmetric',
+            \  'level':   1,
+            \  'title':   'ATX heading level 1 with preceding label line',
+            \  'anchors': [],
+            \ }, info
+
+
+Given asciidoc (Setext headings):
+  Setext title
+  ============
+
+  Setext heading level 1
+  ----------------------
+
+  Setext heading level 2
+  ~~~~~~~~~~~~~~~~~~~~~~
+
+  Setext heading level 3
+  ^^^^^^^^^^^^^^^^^^^^^^
+
+  Setext heading level 4
+  ++++++++++++++++++++++
+
+  [[someanchor]]
+  Setext heading level 2 with preceding anchor line
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  .some label
+  Setext heading level 1 with preceding label line
+  ------------------------------------------------
+
+Execute (search all Setext headings):
+  let lnum = 0
+  " Find first heading
+  let lnum = asciidoc#sections#search_heading(lnum, 'c')
+  AssertEqual 1,  lnum
+  " Find heading /at/ first line
+  let lnum = asciidoc#sections#search_heading(lnum, 'c')
+  AssertEqual 1,  lnum
+  " Find heading /after/ first line
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 4,  lnum
+  " Find heading level 2
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 7,  lnum
+  " Find heading level 3
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 10, lnum
+  " Find heading level 4
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 13, lnum
+  " Find heading level 5
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 17, lnum
+  " Find heading with anchor line
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 21, lnum
+  " Find non-existing headng
+  let lnum = asciidoc#sections#search_heading(lnum, '')
+  AssertEqual 0,  lnum
+
+Execute (search all Setext headings backwards):
+  let lnum = 21
+  " Find heading with anchor line
+  let lnum = asciidoc#sections#search_heading(lnum, 'cb')
+  AssertEqual 21, lnum
+  " Find heading level 5
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 17, lnum
+  " Find heading level 4
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 13, lnum
+  " Find heading level 3
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 10, lnum
+  " Find heading level 2
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 7,  lnum
+  " Find heading /after/ first line
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 4,  lnum
+  " Find heading /at/ first line
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 1,  lnum
+  " Find non-existing headng
+  let lnum = asciidoc#sections#search_heading(lnum, 'b')
+  AssertEqual 0,  lnum
+
+Execute (get Setext heading info):
+  let info = asciidoc#sections#get_heading_info(1)
+  AssertEqual {'lnum':    1,
+            \  'type':    'setext',
+            \  'level':   0,
+            \  'title':   'Setext title',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(4)
+  AssertEqual {'lnum':    4,
+            \  'type':    'setext',
+            \  'level':   1,
+            \  'title':   'Setext heading level 1',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(7)
+  AssertEqual {'lnum':    7,
+            \  'type':    'setext',
+            \  'level':   2,
+            \  'title':   'Setext heading level 2',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(10)
+  AssertEqual {'lnum':    10,
+            \  'type':    'setext',
+            \  'level':   3,
+            \  'title':   'Setext heading level 3',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(13)
+  AssertEqual {'lnum':    13,
+            \  'type':    'setext',
+            \  'level':   4,
+            \  'title':   'Setext heading level 4',
+            \  'anchors': [],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(17)
+  AssertEqual {'lnum':    17,
+            \  'type':    'setext',
+            \  'level':   2,
+            \  'title':   'Setext heading level 2 with preceding anchor line',
+            \  'anchors': ['someanchor'],
+            \ }, info
+
+  let info = asciidoc#sections#get_heading_info(21)
+  AssertEqual {'lnum':    21,
+            \  'type':    'setext',
+            \  'level':   1,
+            \  'title':   'Setext heading level 1 with preceding label line',
+            \  'anchors': [],
+            \ }, info
+
+
+Given asciidoc (section headings with inline anchors):
+  section heading without anchor
+
+  [[second]][[third]] section heading with [[fourth]] many anchors [[fifth]] [[sixth]] [[primary]]
+
+  section heading with trailing non-primary anchors [[second]] [[third]][[fourth]]
+
+  [#second] section heading with invalid shorthand anchors [#third] [#primary]
+
+  section heading with only invalid anchors [[anchor]one]] [[anchor[two]] [[anchor four]]
+
+  section heading wi[[anchor]]th anchor inside word
+
+Execute (parse inline anchors):
+  " No anchors
+  let anchors = asciidoc#sections#get_inline_anchors(getline(1))
+  AssertEqual [], anchors
+  " section heading all anchors (with primary)
+  let anchors = asciidoc#sections#get_inline_anchors(getline(3))
+  AssertEqual ['primary', 'second', 'third', 'fourth', 'fifth', 'sixth'], anchors
+  " Non-primary anchors
+  let anchors = asciidoc#sections#get_inline_anchors(getline(5))
+  AssertEqual ['second', 'third', 'fourth'], anchors
+  " Invalid shorthand anchors
+  let anchors = asciidoc#sections#get_inline_anchors(getline(7))
+  AssertEqual [], anchors
+  " Invalid anchors
+  let anchors = asciidoc#sections#get_inline_anchors(getline(9))
+  AssertEqual [], anchors
+  " Anchor inside word
+  let anchors = asciidoc#sections#get_inline_anchors(getline(11))
+  AssertEqual ['anchor'], anchors
+
+
+~ TODO: We need a test for the possible preceding lines for sections
+~       e.g.
+~           Nudelbauer
+~           [[anchor]]
+~           == my title
+~       is valid, but
+~           Nudelbauer
+~           == my title
+~       is not valid.
+
+Execute (strip anchors):
+  " No anchors
+  let stripped = asciidoc#sections#strip_inline_anchors(getline(1))
+  AssertEqual getline(1), stripped
+  " section heading all anchors (with primary)
+  let stripped = asciidoc#sections#strip_inline_anchors(getline(3))
+  AssertEqual 'section heading with many anchors', stripped
+  " Non-primary anchors
+  let stripped = asciidoc#sections#strip_inline_anchors(getline(5))
+  AssertEqual 'section heading with trailing non-primary anchors', stripped
+  " Invalid shorthand anchors
+  let stripped = asciidoc#sections#strip_inline_anchors(getline(7))
+  AssertEqual getline(7), stripped
+  " Invalid anchors
+  let stripped = asciidoc#sections#strip_inline_anchors(getline(9))
+  AssertEqual getline(9), stripped
+  " Anchor inside word
+  let stripped = asciidoc#sections#strip_inline_anchors(getline(11))
+  AssertEqual 'section heading with anchor inside word', stripped
+
+
+Given asciidoc (Setext headings with differing underlines):
+  Valid Setext heading
+  --------------------
+
+  Setext underline in tolerance range +1
+  ---------------------------------------
+
+  Setext underline in tolerance range -1
+  -------------------------------------
+
+  Setext underline too long
+  ---------------------------
+
+  Setext underline too short
+  ------------------------
+
+      Setext heading with leading spaces
+  --------------------------------------
+
+  Valid Setext heading with trailing spaces   
+  -----------------------------------------
+
+  Invalid Setext heading with trailing spaces   
+  ----------------------------------------------
+
+  Valid Setext underline with trailing spaces
+  -------------------------------------------     
+
+  Invalid Setext underline with trailing spaces
+  ----------------------------------------     
+
+  Valid Setext heading with trailing anchor [[someanchor]]
+  --------------------------------------------------------
+
+Execute (parse Setext headings with differing underlines):
+  let info = asciidoc#sections#get_heading_info(1)
+  AssertNotEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(4)
+  AssertNotEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(7)
+  AssertNotEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(10)
+  AssertEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(13)
+  AssertEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(16)
+  AssertNotEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(19)
+  AssertNotEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(22)
+  AssertEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(25)
+  AssertNotEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(28)
+  AssertEqual {}, info
+
+  let info = asciidoc#sections#get_heading_info(31)
+  AssertNotEqual {}, info
+
+
+Given asciidoc (Small doc with multiple sections):
+  = ATX title
+  :toc:
+
+  Some text.
+
+  Setext level 1 heading
+  -------------------
+
+  Some more text.
+
+  == ATX level 1 heading
+
+  And even more text.
+
+Execute (jump back and forth between section headings):
+  " Start at the beginning of the file
+  call cursor(1, 1)
+
+  " Jump to the next heading
+  call asciidoc#sections#jump_to_next_section_title(1, 'n', v:false)
+  AssertEqual 6, line('.')
+
+  " Jump again to the next (Setext) heading
+  call asciidoc#sections#jump_to_next_section_title(1, 'n', v:false)
+  AssertEqual 11, line('.')
+
+  " Jump back two headings
+  call asciidoc#sections#jump_to_next_section_title(2, 'n', v:true)
+  AssertEqual 1, line('.')
+
+  " Jump forward to non-existant heading
+  call asciidoc#sections#jump_to_next_section_title(3, 'n', v:false)
+  AssertEqual 1, line('.')
+
+
+Given asciidoc (Document with various level section heading):
+  Setext title
+  ============
+  :toc:
+
+  Some text.
+
+  Setext level 1 headng
+  ---------------------
+
+  Some more text.
+
+  === ATX level 2 heading
+
+  Even more text.
+
+  == ATX level 1 heading
+
+  Setext level 2 heading
+  ~~~~~~~~~~~~~~~~~~~~~~
+
+  And a bit more text.
+
+  ==== ATX level 3 heading
+
+  ===== ATX level 4 heading
+
+Execute (jump section level hierarchy):
+  " Start at the beginning of the file
+  call cursor(1, 1)
+
+  " Jump to next sibling: There is none
+  call asciidoc#sections#jump_to_section_title(1, 'n', 'sibling', v:false)
+  AssertEqual 1, line('.')
+
+  " Jump to next child section
+  call asciidoc#sections#jump_to_section_title(1, 'n', 'parent-child', v:false)
+  AssertEqual 7, line('.')
+
+  " Jump to next child section
+  call asciidoc#sections#jump_to_section_title(1, 'n', 'parent-child', v:false)
+  AssertEqual 12, line('.')
+
+  " Jump to next child section: There is none
+  call asciidoc#sections#jump_to_section_title(1, 'n', 'parent-child', v:false)
+  AssertEqual 12, line('.')
+
+  " Jump to next parent section
+  call asciidoc#sections#jump_to_section_title(1, 'n', 'parent-child', v:true)
+  AssertEqual 7, line('.')
+
+  " Jump to next sibling section
+  call asciidoc#sections#jump_to_section_title(1, 'n', 'sibling', v:false)
+  AssertEqual 16, line('.')
+
+  " Jump to previous sibling section
+  call asciidoc#sections#jump_to_section_title(1, 'n', 'sibling', v:true)
+  AssertEqual 7, line('.')
+
+  " Jump to previous sibling section: There is none
+  call asciidoc#sections#jump_to_section_title(1, 'n', 'sibling', v:true)
+  AssertEqual 7, line('.')
+
+  " Jump to previous parent section
+  call asciidoc#sections#jump_to_section_title(1, 'n', 'parent-child', v:true)
+  AssertEqual 1, line('.')
+
+Given asciidoc (Document with deeply nested section levels):
+  == 1
+
+  === 1.1
+
+  ==== 1.1.1
+
+  ===== 1.1.1.1
+
+  ===== 1.1.1.2
+
+  === 1.2
+
+  ==== 1.2.1
+
+  ===== 1.2.1.1
+
+  === 1.3
+
+  == 2
+
+  === 2.1
+
+  === 2.2
+
+  == 3
+
+Execute (jump multiple section levels):
+  " Start at section 1
+  call cursor(1, 1)
+
+  " Jump to 2nd sibling
+  call asciidoc#sections#jump_to_section_title(2, 'n', 'sibling', v:false)
+  AssertEqual 25, line('.')
+
+  " Jump to 2nd sibling backwards
+  call asciidoc#sections#jump_to_section_title(2, 'n', 'sibling', v:true)
+  AssertEqual 1, line('.')
+
+  " Jump to 3rd child
+  call asciidoc#sections#jump_to_section_title(3, 'n', 'parent-child', v:false)
+  AssertEqual 7, line('.')
+
+  " Jump to 2nd parent
+  call asciidoc#sections#jump_to_section_title(2, 'n', 'parent-child', v:true)
+  AssertEqual 3, line('.')
+
+  " Jump to 5th (non-existant) sibling
+  call asciidoc#sections#jump_to_section_title(5, 'n', 'sibling', v:false)
+  AssertEqual 3, line('.')
+
+  " Jump to 5th (non-existant) child
+  call asciidoc#sections#jump_to_section_title(5, 'n', 'parent-child', v:false)
+  AssertEqual 3, line('.')
+
+  " Jump to 5th (non-existant) parent
+  call asciidoc#sections#jump_to_section_title(5, 'n', 'parent-child', v:false)
+  AssertEqual 3, line('.')
