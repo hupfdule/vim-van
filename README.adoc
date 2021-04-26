@@ -1,0 +1,83 @@
+Asciidoc Plugin for Vim
+=======================
+Marco Herrn <marco@mherrn.de>
+2019-09-17
+:experimental:
+:toc: left
+:icons: font
+
+
+This plugin provides support for writing Asciidoc documents with vim.
+
+[WARNING]
+--
+*ATTENTION!* This is still work in progess.
+--
+
+Overview
+--------
+
+This plugin tries to achieve the following goals:
+
+ - Support all valid Asciidoc syntax elements
+ - Provide a good out-of-the-box experience without any configuration
+ - Allow configuration to override or disable defaults
+ - Provide Asciidoc-specific functionality to ease the creation and
+   modification of Asciidoc documents.
+
+
+Provided functionality
+----------------------
+
+=== Navigation
+
+
+=== Syntax Help
+
+
+Command overview
+----------------
+
+
+Mapping overview
+----------------
+
+Below are the default mappings provided by this plugin.
+In parentheses after that key sequence are the modes the mappings are
+active.
+
+=== Navigation
+
+`]]` (nov)::
+  Jump to the next section heading +
+  `<Plug>(AsciidocNextSection)`
+
+`[[` (nov)::
+  Jump to the previous section heading +
+  `<Plug>(AsciidocPrevSection)`
+
+`]}` (nov), `<c-j>` (nov)::
+  Jump to the next sibling section heading +
+  `<Plug>(AsciidocNextSiblingSection)`
+
+`[{` (nov), `<c-k>` (nov)::
+  Jump to the previous sibling section heading +
+  `<Plug>(AsciidocPrevSection)`
+
+`]>` (nov), `<c-l>` (nov)::
+  Jump to the next child section heading +
+  `<Plug>(AsciidocNextChildSection)`
+
+`[<` (nov), `<c-h>` (nov)::
+  Jump to the previous parent section heading +
+  `<Plug>(AsciidocPrevParentSection)`
+
+
+Related projects
+----------------
+
+
+License
+-------
+
+

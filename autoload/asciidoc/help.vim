@@ -1,4 +1,5 @@
-let s:user_syntax_help_file= split(&rtp, ',')[0]. '/vim-asciidoc-ng/asciidoc_syntax_help.adoc'
+let s:default_syntax_help_file= expand('<sfile>:p:h') . '/../../help/asciidoc_syntax_help.adoc'
+let s:user_syntax_help_file= split(&rtp, ',')[0]. '/vim-van/help/asciidoc_syntax_help.adoc'
 
 
 ""
@@ -25,6 +26,8 @@ function! asciidoc#help#syntax() abort
   else
     let l:syntax_help_file= s:default_syntax_help_file
   endif
+
+  echom l:syntax_help_file
 
   let l:cmd= 'split ' . l:syntax_help_file
   if get(g:, 'asciidoc_help_vertical', 0)

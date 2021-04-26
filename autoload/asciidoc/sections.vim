@@ -361,7 +361,8 @@ function! asciidoc#sections#jump_to_section_title(count, mode, traversal, backwa
   " FIXME: Validate parameters
   let l:cur_section = asciidoc#sections#get_heading_info(line('.'))
   if l:cur_section ==# {}
-    let l:cur_section = asciidoc#sections#search_heading(line('.'), 'b')
+    let l:cur_section_line = asciidoc#sections#search_heading(line('.'), 'b')
+    let l:cur_section = asciidoc#sections#get_heading_info(l:cur_section_line)
   endif
 
   " If the cursor is before the first section title, do nothing
